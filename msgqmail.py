@@ -3,7 +3,7 @@
 import requests
 import redis
 import time
-
+import multiprocessing
 from callsendmail import cls_sendmail
 
 redis_host = 'localhost'
@@ -11,46 +11,30 @@ redis_port = '6379'
 redis_db = '0'
 rs = redis.StrictRedis(host=redis_host,port=redis_port,db=redis_db)
 
-class httpcode():
-    def __init__(self,url):
-        self.url = url
+def smail(msg):
+    print cls_sendmail('Status Change repo',msg).sendmail()
+def Checkey(key):
+    return rs.exists(key)
 
-    def get_code(self):
-        print self.url+' status code:',
-        return requests.get(self.url).status_code
+def readlist(key):
+    return rs.smembers (key)
 
-def Checkaddlist():
-#redis SADD Serverlist http1 http2 etc.
-    urllist = rs.smembers ('Serverlist')
-#urllist = ['http://www.baidu.com','http://www.google.com']
-    print urllist
-    for url in urllist:
-        try:
-            url_code = httpcode(url)
-            status =  str(url_code.get_code())
-        except Exception, e:
-            print repr(e)
-            print '--try again--'
-            time.sleep(1)
-            try:
-                url_code = httpcode(url)
-                status =  str(url_code.get_code())
-            except Exception, e:
-                print repr(e) + 'Dead'
-                status = str('000')
-
-        if status == str(rs.get(url)):
-            print 'No change:' + status
-        else :
-            print 'Change:'+ status + str(rs.set(url,status))
-            key = 'smglist'
-            rs.sadd(key,url)
-            
-    uploadTime = str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-    print uploadTime+ " " + str(rs.set('uploadTime',uploadTime))
-    print '-----------------------------------------------------'
+def doit(key):
+    print 'smgList is: ' +key + ' @'+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    if Checkey(key):
+        for url in readlist(key):
+            print url
+            if url:
+                status = str(rs.get(url))
+                msg = '<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<font style="font-family:Microsoft YaHei">\n<br/>Chack Server RepoMail\n<br/>date: '+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))+'\n<br/>URL: '+url+'\n<br/>HttpCode: '+status+'\n<br/><HR align=left width=300 color=#987cb9 SIZE=1> </font>  \n</body>\n</html>'
+                p = multiprocessing.Process(target = smail, args = (msg,))
+                p.start()
+                print 'remove list '+str(rs.srem(key,url))
+                #print 'remove keys '+str(rs.delete(url))
+    else:
+        print 'list is null'
 
 if __name__ == "__main__":
-    while (1):
-        Checkaddlist()
-        time.sleep(60)
+    while(1):
+        doit('smglist')
+        time.sleep(1)
