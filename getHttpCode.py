@@ -4,8 +4,6 @@ import requests
 import redis
 import time
 
-from callsendmail import cls_sendmail
-
 redis_host = 'localhost'
 redis_port = '6379'
 redis_db = '0'
