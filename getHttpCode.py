@@ -19,10 +19,10 @@ class httpcode():
         print self.url+' status code:',
         return requests.get(self.url).status_code
 
-if __name__ == "__main__":
+def Checkaddlist():
 #redis SADD Serverlist http1 http2 etc.
     urllist = rs.smembers ('Serverlist')
-#    urllist = ['http://www.baidu.com','http://www.google.com']
+#urllist = ['http://www.baidu.com','http://www.google.com']
     print urllist
     for url in urllist:
         try:
@@ -43,12 +43,14 @@ if __name__ == "__main__":
             print 'No change:' + status
         else :
             print 'Change:'+ status + str(rs.set(url,status))
-            msg = '<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<font style="font-family:Microsoft YaHei">\n<br/>Chack Server RepoMail\n<br/>date: '+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))+'\n<br/>URL: '+url+'\n<br/>HttpCode: '+status+'\n<br/><HR align=left width=300 color=#987cb9 SIZE=1> </font>  \n</body>\n</html>'
-            print cls_sendmail('Status Change repo',msg).sendmail()
-            time.sleep(0.5)
-
-
+            key = 'smglist'
+            rs.sadd(key,url)
+            
     uploadTime = str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     print uploadTime+ " " + str(rs.set('uploadTime',uploadTime))
     print '-----------------------------------------------------'
 
+if __name__ == "__main__":
+    while (1):
+        Checkaddlist()
+        time.sleep(60)
