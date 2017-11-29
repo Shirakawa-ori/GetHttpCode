@@ -38,8 +38,8 @@ class cls_sendmail:
         receivers = ['********@******.com,******@*****.com']      #接收邮箱
 
         message = MIMEText("<html>" + self.msg + "</html>", 'html', 'utf-8')
-        message['From'] = Header("status@sern.science", 'utf-8')	#发件人
-        message['To'] =  Header("status@sern.science", 'utf-8')		#收件人
+        message['From'] = Header("********@******", 'utf-8')	#发件人
+        message['To'] =  Header("********@******", 'utf-8')		#收件人
         subject = self.subject +'_RANDOM_'+randomS
         #subject = '服务不可达报告' 					#主题
         message['Subject'] = Header(subject, 'utf-8')			#正文
