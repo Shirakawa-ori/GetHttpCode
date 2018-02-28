@@ -1,6 +1,6 @@
 # GetHttpCode
 
-很菜的代码。。<br>
+很菜的项目以及很乱的逻辑。。<br>
 需要用到redis<br>
 pip install redis<br>
 如果要使用钉钉bot<br>
