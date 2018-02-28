@@ -29,6 +29,13 @@ def doit(key):
                 msg = '<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<font style="font-family:Microsoft YaHei">\n<br/>Chack Server RepoMail\n<br/>date: '+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))+'\n<br/>URL: '+url+'\n<br/>HttpCode: '+status+'\n<br/><HR align=left width=300 color=#987cb9 SIZE=1> </font>  \n</body>\n</html>'
                 p = multiprocessing.Process(target = smail, args = (msg,))
                 p.start()
+              
+                #dkbot
+                webhook = 'https://oapi.dingtalk.com/robot/send?access_token=#your_token'
+                ddtext = 'Server URL:'+str(url)+'\nStatus Change:'+str(status)+' @'+str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                print ddtext
+                ddbot_text(webhook,ddtext)
+
                 print 'remove list '+str(rs.srem(key,url))
                 #print 'remove keys '+str(rs.delete(url))
     else:
