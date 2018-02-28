@@ -3,6 +3,8 @@
 很菜的代码。。<br>
 需要用到redis<br>
 pip install redis<br>
+如果要使用钉钉bot<br>
+pip install DingtalkChatbot <br>
 <br>
 编辑add.sh批量添加关注的网站 必须有http:// 或者https:// 不然会报错<br>
 <br>
